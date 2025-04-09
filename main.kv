@@ -1,0 +1,128 @@
+<NewTreningScreen>
+    GridLayout:
+        cols: 1
+        size: root.width, root.height
+        Label:
+            size_hint: 1, 0.33
+            text: "Тренировка"
+        GridLayout:
+            cols: 2
+            size_hint: 1, 0.33
+            Label:
+                text: "Дата: "
+            TextInput:
+                hint_text: 'ГГГГ-ММ-ДД'
+                multiline: False
+                on_text: root.data(self.text)
+        GridLayout:
+            cols: 5
+            size_hint: 1, 0.33
+            Label:
+                text: "Тип: "
+            CheckBox:
+                group: "tip"
+                on_active: root.radio_clic(self, 'Тренировка')
+            Label:
+                text: "Тренировка"
+            CheckBox:
+                group: "tip"
+                on_active: root.radio_clic(self, 'Соревнования')
+            Label:
+                text: "Соревнование"
+        GridLayout:
+            cols: 2
+            size_hint: 1, 0.33
+            Label:
+                text: "Вид: "
+            TextInput:
+                multiline: False
+                on_text: root.vide(self.text)
+        Label:
+            size_hint: 1, 0.33
+            text: "Описание:"
+        TextInput:
+            on_text: root.opisanie(self.text)
+        GridLayout:
+            cols: 3
+            size_hint: 1, 0.5
+            Label:
+                text: "Время в мин.: "
+            Label:
+                text: "Пульс ср.: "
+            Label:
+                text: "Км: "
+            TextInput:
+                multiline: False
+                on_text: root.time(self.text)
+            TextInput:
+                multiline: False
+                on_text: root.puls(self.text)
+            TextInput:
+                multiline: False
+                on_text: root.km(self.text)
+        Button:
+            size_hint: 1, 0.5
+            text: "Сохранить"
+            on_press: root.save()
+
+<FavotitScreen>
+    id: favorit
+    GridLayout:
+        cols: 1
+        size: root.width, root.height
+        ScrollView:
+            GridLayout:
+                cols: 1
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: [0,50]
+                id: output
+
+
+        GridLayout:
+            cols: 2
+            size_hint: 1, 0.2
+            Button:
+                text: '+'
+                on_press: root.to_new_trening()
+            Button:
+                text: 'Отчёт'
+                on_press: root.otchet()
+
+<OtchetScreen>
+    GridLayout:
+        cols: 1
+        Label:
+            text: 'Введите интересующий ваc период:'
+            size_hint: 1, 0.1
+        GridLayout:
+            cols: 4
+            Label:
+                text: 'от'
+                size_hint: 0.1, 0.005
+            TextInput:
+                id: ot
+                multiline: False
+                hint_text: 'ГГГГ-ММ-ДД'
+                size_hint: 1, 0.005
+            Label:
+                text: 'до'
+                size_hint: 0.1, 0.005
+            TextInput:
+                id: do
+                multiline: False
+                hint_text: 'ГГГГ-ММ-ДД'
+                size_hint: 1, 0.005
+        GridLayout:
+            cols: 1
+            Label:
+                id: otchet
+                text: ''
+            Button:
+                text: 'Сформировать'
+                size_hint: 1, 0.1
+                on_press: root.sformirovate()
+            Button:
+                text: 'Назад'
+                size_hint: 1, 0.1
+                on_press: root.nazad()
