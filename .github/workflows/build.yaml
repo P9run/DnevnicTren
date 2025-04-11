@@ -53,6 +53,11 @@ jobs:
         run: |
           python -m pip install --user buildozer
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+          
+      - name: Install Buildozer and dependencies
+        run: |
+          pip install --user buildozer cython==0.29.33
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Build APK
         run: |
