@@ -75,12 +75,28 @@ jobs:
             echo "buildozer.spec already exists, skipping init"
           fi
 
+      - name: Install python-for-android
+        run: |
+          # Create directory if not exists
+          mkdir -p ~/.buildozer/android/platform/python-for-android
+          
+          # Clone python-for-android if directory is empty
+          if [ -z "$(ls -A ~/.buildozer/android/platform/python-for-android)" ]; then
+            git clone https://github.com/kivy/python-for-android.git ~/.buildozer/android/platform/python-for-android
+            cd ~/.buildozer/android/platform/python-for-android
+            git checkout master
+            pip install -e .
+          else
+            echo "python-for-android already exists, skipping clone"
+          fi
+
       - name: Verify environment
         run: |
           echo "Checking installed components..."
           ~/.local/bin/buildozer --version
           java -version
           ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --list
+          ls -la ~/.buildozer/android/platform/python-for-android
 
       - name: Build APK
         run: |
