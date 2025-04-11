@@ -50,13 +50,15 @@ jobs:
           echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
           echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
           
-          # Принимаем лицензии
+          # Принимаем лицензии (альтернативный способ без yes)
           mkdir -p ~/.android/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.android/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.android/licenses/android-sdk-license
+          echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
           
-          # Устанавливаем необходимые компоненты Android
-          yes | sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-31" "build-tools;31.0.0" "platform-tools"
+          # Устанавливаем необходимые компоненты Android (без yes)
+          echo "Installing Android packages..."
+          ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-31" "build-tools;31.0.0" "platform-tools" --verbose
           
           # Очищаем временные файлы
           rm -rf cmdline-tools-temp commandlinetools-linux-*.zip
@@ -66,6 +68,13 @@ jobs:
           python -m pip install --user buildozer cython==0.29.33 virtualenv
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           ~/.local/bin/buildozer init
+
+      - name: Verify environment
+        run: |
+          echo "Checking installed components..."
+          ~/.local/bin/buildozer --version
+          java -version
+          ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --list
 
       - name: Build APK
         run: |
