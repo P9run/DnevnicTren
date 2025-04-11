@@ -56,7 +56,6 @@ jobs:
 
       - name: Build APK
         run: |
-          ~/.local/bin/buildozer android clean
           ~/.local/bin/buildozer -v android debug
 
 
