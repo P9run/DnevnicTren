@@ -48,6 +48,16 @@ jobs:
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.android/licenses/android-sdk-license
           
           rm -rf cmdline-tools-temp commandlinetools-linux-*.zip
+          
+      - name: Install Buildozer with user scope
+        run: |
+          python -m pip install --user buildozer
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Initialize Buildozer
+        run: |
+          ~/.local/bin/buildozer init
+          ~/.local/bin/buildozer android update
 
       - name: Build APK
         run: |
