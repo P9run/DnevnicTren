@@ -52,7 +52,6 @@ jobs:
       - name: Install Buildozer and dependencies
         run: |
           pip install buildozer cython==0.29.33 virtualenv
-          buildozer init
           buildozer android update
 
       - name: Build APK
