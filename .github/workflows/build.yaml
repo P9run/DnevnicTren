@@ -23,12 +23,13 @@ jobs:
             pkg-config zlib1g-dev libncurses5-dev \
             libncursesw5-dev libtinfo5 cmake \
             libffi-dev libssl-dev
-      - name: Setup Android SDK and accept licenses
+      - name: Setup Android SDK
         run: |
-          mkdir -p ~/.android
-          touch ~/.android/repositories.cfg
-          # Явно указываем путь к sdkmanager
-          yes | ${HOME}/.buildozer/android/platform/android-sdk/cmdline-tools/bin/sdkmanager --licenses
+         mkdir -p ~/.android
+         touch ~/.android/repositories.cfg
+         wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+         unzip commandlinetools-linux-*.zip -d ~/.buildozer/android/platform/android-sdk/cmdline-tools
+         yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/bin/sdkmanager --licenses
 
       - name: Accept Android licenses
         run: |
