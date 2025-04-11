@@ -49,11 +49,6 @@ jobs:
           
           rm -rf cmdline-tools-temp commandlinetools-linux-*.zip
 
-      - name: Install Buildozer and dependencies
-        run: |
-          pip install buildozer cython==0.29.33 virtualenv
-          buildozer android update
-
       - name: Build APK
         run: |
           buildozer android clean
