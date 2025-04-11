@@ -4,7 +4,7 @@
 title = DnevnicTren
 
 # (str) Package name
-package.name = myapp
+package.name = dnevnictren
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = org.test
