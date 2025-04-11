@@ -7,41 +7,41 @@ jobs:
     timeout-minutes: 90
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.8'
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          git zip unzip openjdk-11-jdk \
-          python3-pip autoconf libtool \
-          pkg-config zlib1g-dev libncurses5-dev \
-          libncursesw5-dev libtinfo5 cmake \
-          libffi-dev libssl-dev
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            git zip unzip openjdk-11-jdk \
+            python3-pip autoconf libtool \
+            pkg-config zlib1g-dev libncurses5-dev \
+            libncursesw5-dev libtinfo5 cmake \
+            libffi-dev libssl-dev
 
-    - name: Install Buildozer
-      run: |
-        pip install buildozer
-        buildozer init
+      - name: Install Buildozer
+        run: |
+          pip install buildozer
+          buildozer init
 
-    - name: Accept Android licenses
-      run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
-        yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
+      - name: Accept Android licenses
+        run: |
+          mkdir -p ~/.android
+          touch ~/.android/repositories.cfg
+          yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses
 
-    - name: Build APK
-      run: |
-        buildozer -v android debug
-        ls -lh bin/
+      - name: Build APK
+        run: |
+          buildozer -v android debug
+          ls -lh bin/
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v3
-      with:
-        name: app
-        path: bin/*.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4  # ← Исправлено на v4
+        with:
+          name: app
+          path: bin/*.apk
