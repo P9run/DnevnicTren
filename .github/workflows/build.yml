@@ -15,7 +15,7 @@ steps:
 id: get-date
 shell: bash
 run: |
-echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+echo "date=$(/bin/date -u "+%Y%m%d")" >> $GITHUB_OUTPUT
 
 - name: Cache Buildozer global directory
 uses: actions/cache@v2
