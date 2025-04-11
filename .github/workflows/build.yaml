@@ -12,7 +12,23 @@ jobs:
       - name: Set up environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk wget unzip
+          sudo apt-get install -y \
+            openjdk-17-jdk \
+            wget \
+            unzip \
+            git \
+            zip \
+            python3-pip \
+            autoconf \
+            libtool \
+            pkg-config \
+            zlib1g-dev \
+            libncurses5-dev \
+            libncursesw5-dev \
+            libtinfo5 \
+            cmake \
+            libffi-dev \
+            libssl-dev
           echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
           echo "PATH=$JAVA_HOME/bin:$PATH" >> $GITHUB_ENV
 
@@ -22,19 +38,26 @@ jobs:
           mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools
           touch ~/.android/repositories.cfg
           
+          # Download and install Android Command Line Tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
           unzip commandlinetools-linux-*.zip -d cmdline-tools-temp
+          mv cmdline-tools-temp/cmdline-tools ~/.buildozer/android/platform/android-sdk/cmdline-tools
           
-          find cmdline-tools-temp -name 'sdkmanager' -exec dirname {} \; | xargs -I{} mv {} ~/.buildozer/android/platform/android-sdk/cmdline-tools
-          
+          # Accept licenses
           mkdir -p ~/.android/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.android/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.android/licenses/android-sdk-license
           
+          # Install required Android packages
+          ~/.buildozer/android/platform/android-sdk/cmdline-tools/bin/sdkmanager "platforms;android-31" "build-tools;31.0.0" "platform-tools"
+          
           rm -rf cmdline-tools-temp commandlinetools-linux-*.zip
 
-      - name: Install Buildozer
-        run: pip install buildozer
+      - name: Install Buildozer and dependencies
+        run: |
+          pip install buildozer cython==0.29.33 virtualenv
+          buildozer init
+          buildozer android update
 
       - name: Build APK
         run: |
@@ -42,6 +65,7 @@ jobs:
           buildozer -v android debug
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: app
