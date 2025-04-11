@@ -13,9 +13,9 @@ jobs:
       # used to cache dependencies with a timeout
     - name: Get Date
       id: get-date
+      shell: bash
       run: |
         echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
-        shell: bash
 
     - name: Cache Buildozer global directory
       uses: actions/cache@v2
