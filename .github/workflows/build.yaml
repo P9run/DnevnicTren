@@ -52,7 +52,7 @@ jobs:
       - name: Build APK
         run: |
           buildozer android clean
-          buildozer -v android debug
+          buildozer  android debug
 
       - name: Upload APK
         if: success()
