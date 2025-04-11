@@ -34,40 +34,46 @@ jobs:
 
       - name: Setup Android SDK
         run: |
-          # Создаем структуру каталогов
+          # Create directory structure
           mkdir -p ~/.android
           mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
           touch ~/.android/repositories.cfg
           
-          # Скачиваем и распаковываем Command Line Tools
+          # Download and extract Command Line Tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
           unzip commandlinetools-linux-*.zip -d cmdline-tools-temp
           
-          # Перемещаем файлы в правильную директорию
+          # Move files to correct location
           mv cmdline-tools-temp/cmdline-tools/* ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/
           
-          # Устанавливаем переменные окружения для Android SDK
+          # Set environment variables
           echo "ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk" >> $GITHUB_ENV
           echo "PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
           
-          # Принимаем лицензии (альтернативный способ без yes)
+          # Accept licenses
           mkdir -p ~/.android/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55" > ~/.android/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> ~/.android/licenses/android-sdk-license
           echo "84831b9409646a918e30573bab4c9c91346d8abd" > ~/.android/licenses/android-sdk-preview-license
           
-          # Устанавливаем необходимые компоненты Android (без yes)
+          # Install Android components
           echo "Installing Android packages..."
           ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-31" "build-tools;31.0.0" "platform-tools" --verbose
           
-          # Очищаем временные файлы
+          # Clean up
           rm -rf cmdline-tools-temp commandlinetools-linux-*.zip
 
       - name: Install Buildozer and dependencies
         run: |
           python -m pip install --user buildozer cython==0.29.33 virtualenv
           echo "$HOME/.local/bin" >> $GITHUB_PATH
-          ~/.local/bin/buildozer init
+          
+          # Only initialize if buildozer.spec doesn't exist
+          if [ ! -f buildozer.spec ]; then
+            ~/.local/bin/buildozer init
+          else
+            echo "buildozer.spec already exists, skipping init"
+          fi
 
       - name: Verify environment
         run: |
