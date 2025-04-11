@@ -28,15 +28,17 @@ jobs:
             libtinfo5 \
             cmake \
             libffi-dev \
-            libssl-dev
+            libssl-dev \
+            python3-venv
           echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
           echo "PATH=$JAVA_HOME/bin:$PATH" >> $GITHUB_ENV
 
       - name: Setup Android SDK
         run: |
-          # Create directory structure
+          # Create full directory structure
           mkdir -p ~/.android
           mkdir -p ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          mkdir -p ~/.buildozer/android/platform/python-for-android
           touch ~/.android/repositories.cfg
           
           # Download and extract Command Line Tools
@@ -58,48 +60,54 @@ jobs:
           
           # Install Android components
           echo "Installing Android packages..."
-          ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME "platforms;android-31" "build-tools;31.0.0" "platform-tools" --verbose
+          ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_HOME \
+            "platforms;android-31" \
+            "build-tools;31.0.0" \
+            "platform-tools" \
+            "ndk;25b" \
+            --verbose
           
           # Clean up
           rm -rf cmdline-tools-temp commandlinetools-linux-*.zip
 
       - name: Install Buildozer and dependencies
         run: |
+          python -m pip install --user --upgrade pip wheel
           python -m pip install --user buildozer cython==0.29.33 virtualenv
           echo "$HOME/.local/bin" >> $GITHUB_PATH
           
-          # Only initialize if buildozer.spec doesn't exist
+          # Initialize if no buildozer.spec
           if [ ! -f buildozer.spec ]; then
             ~/.local/bin/buildozer init
           else
-            echo "buildozer.spec already exists, skipping init"
+            echo "Using existing buildozer.spec"
           fi
 
-      - name: Install python-for-android
+      - name: Setup Python for Android
         run: |
-          # Create directory if not exists
-          mkdir -p ~/.buildozer/android/platform/python-for-android
+          # Create and activate virtual environment
+          python -m venv ~/venv
+          source ~/venv/bin/activate
           
-          # Clone python-for-android if directory is empty
-          if [ -z "$(ls -A ~/.buildozer/android/platform/python-for-android)" ]; then
+          # Clone and install python-for-android
+          if [ ! -d ~/.buildozer/android/platform/python-for-android ]; then
             git clone https://github.com/kivy/python-for-android.git ~/.buildozer/android/platform/python-for-android
             cd ~/.buildozer/android/platform/python-for-android
             git checkout master
             pip install -e .
           else
-            echo "python-for-android already exists, skipping clone"
+            echo "python-for-android already exists"
           fi
-
-      - name: Verify environment
-        run: |
-          echo "Checking installed components..."
-          ~/.local/bin/buildozer --version
-          java -version
-          ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --list
+          
+          # Verify installation
           ls -la ~/.buildozer/android/platform/python-for-android
 
       - name: Build APK
         run: |
+          # Activate virtual environment
+          source ~/venv/bin/activate
+          
+          # Build with verbose output
           ~/.local/bin/buildozer android clean
           ~/.local/bin/buildozer -v android debug
 
