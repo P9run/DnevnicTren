@@ -24,11 +24,6 @@ jobs:
             libncursesw5-dev libtinfo5 cmake \
             libffi-dev libssl-dev
 
-      - name: Install Buildozer
-        run: |
-          pip install buildozer
-          buildozer init
-
       - name: Accept Android licenses
         run: |
           mkdir -p ~/.android
