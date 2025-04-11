@@ -54,11 +54,6 @@ jobs:
           python -m pip install --user buildozer
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: Initialize Buildozer
-        run: |
-          ~/.local/bin/buildozer init
-          ~/.local/bin/buildozer android update
-
       - name: Build APK
         run: |
           ~/.local/bin/buildozer android clean
